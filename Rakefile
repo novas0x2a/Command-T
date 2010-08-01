@@ -1,7 +1,15 @@
 require 'rubygems'
-require 'bundler'
-Bundler.setup
-require 'rspec/core/rake_task'
+
+begin
+  require 'bundler'
+  Bundler.setup
+rescue LoadError
+end
+
+begin
+  require 'rspec/core/rake_task'
+rescue LoadError
+end
 
 def bail_on_failure
   exitstatus = $?.exitstatus
@@ -12,9 +20,11 @@ end
 
 task :default => :spec
 
-desc 'Run specs'
-RSpec::Core::RakeTask.new do |t|
-  t.pattern = './spec/**/*_spec.rb'
+if defined? RSpec::Core::RakeTask
+  desc 'Run specs'
+  RSpec::Core::RakeTask.new do |t|
+    t.pattern = './spec/**/*_spec.rb'
+  end
 end
 
 desc 'Create vimball archive'
